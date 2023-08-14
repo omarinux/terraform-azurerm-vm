@@ -43,12 +43,12 @@ variable "admin_username" {
 
 variable "storage_account_type" {
   description = "Defines the type of storage account to be created. Valid options are Standard_LRS, Standard_ZRS, Standard_GRS, Standard_RAGRS, Premium_LRS."
-  default     = "Premium_LRS"
+  default     = "Standard_LRS"
 }
 
 variable "vm_size" {
   description = "Specifies the size of the virtual machine."
-  default     = "Standard_DS1_V2"
+  default     = "Standard_B1s"
 }
 
 variable "nb_instances" {
@@ -97,7 +97,7 @@ variable "vm_os_version" {
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   description = "A map of the tags to use on the resources that are deployed with this module."
 
   default = {
@@ -131,7 +131,7 @@ variable "data_disk_size_gb" {
 }
 
 variable "data_disk" {
-  type        = "string"
+  type        = string
   description = "Set to true to add a datadisk."
   default     = "false"
 }
