@@ -244,7 +244,7 @@ resource "azurerm_network_interface" "vm" {
   name                      = "nic-${var.vm_hostname}-${count.index}"
   location                  = "${azurerm_resource_group.vm.location}"
   resource_group_name       = "${azurerm_resource_group.vm.name}"
-  network_security_group_id = "${var.nsg_id}"
+  #etwork_security_group_id = "${var.nsg_id}"
 
   ip_configuration {
     name                          = "ipconfig${count.index}"
@@ -252,4 +252,11 @@ resource "azurerm_network_interface" "vm" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = "${length(azurerm_public_ip.vm.*.id) > 0 ? element(concat(azurerm_public_ip.vm.*.id, list("")), count.index) : ""}"
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "test" {
+  count = var.nb_instances
+
+  network_interface_id      = azurerm_network_interface.vm[count.index].id
+  network_security_group_id = "${var.nsg_id}"
 }
