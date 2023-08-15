@@ -1,0 +1,4 @@
+[linux]
+%{ for index, linux in linux_vms_name ~}
+${linux} ${linux_vms_ip[index]}
+%{ endfor ~}
