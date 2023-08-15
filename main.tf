@@ -275,7 +275,7 @@ resource "local_file" "ansible_inventory_linux" {
   content = templatefile("${path.module}/inventory_linux.tmpl",
     {
      linux_vms_name = azurerm_virtual_machine.vm-linux.*.name,
-     linux_vms_ip = azurerm_virtual_machine.vm-linux.*.network_interface_id.public_ip_address
+     #linux_vms_ip = azurerm_virtual_machine.vm-linux.*.network_interface_id.public_ip_address
     }
   )
   filename = "inventory_linux"
@@ -285,7 +285,7 @@ resource "local_file" "ansible_inventory_windows" {
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
      windows_vms_name = azurerm_virtual_machine.vm-windows.*.name,
-     windows_vms_ip = azurerm_virtual_machine.vm-windows.*.network_interface_id.public_ip_address
+     #windows_vms_ip = azurerm_virtual_machine.vm-windows.*.network_interface_id.public_ip_address
     }
   )
   filename = "inventory_windows"
