@@ -255,9 +255,15 @@ resource "azurerm_network_interface" "vm" {
   }
 }
 
+resource "azurerm_network_security_group" "nsg" {
+  location            = "${var.location}"
+  name                = "nsg01"
+  resource_group_name = "${azurerm_resource_group.vm.name}"
+}
+
 resource "azurerm_network_interface_security_group_association" "test" {
   count = var.nb_instances
 
   network_interface_id      = azurerm_network_interface.vm[count.index].id
-  network_security_group_id = "testnsg01"
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
