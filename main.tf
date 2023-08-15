@@ -174,7 +174,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
 }
 
 resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
-  count                         = "${((var.vm_os_id != "" && var.is_windows_image == "true") || "${var.vm_os_simple}" == "WindowsServer")) && var.data_disk == "true" ? var.nb_instances : 0}"
+  count                         = "${((var.vm_os_id != "" && var.is_windows_image == "true") || "${var.vm_os_simple}" == "WindowsServer") && var.data_disk == "true" ? var.nb_instances : 0}"
   name                          = "${var.vm_hostname}${count.index}"
   location                      = "${var.location}"
   resource_group_name           = "${azurerm_resource_group.vm.name}"
