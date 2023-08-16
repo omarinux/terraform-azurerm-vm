@@ -9,7 +9,11 @@ resource "azurerm_resource_group" "vm" {
   tags     = "${var.tags}"
 }
 
-resource "azurerm_resource_group" "terraform-advancedvms" {}
+resource "azurerm_resource_group" "terraform-advancedvms" {
+  name     = "${var.resource_group_name}"
+  location = "${var.location}"
+  tags     = "${var.tags}"
+}
 
 resource "random_id" "vm-sa" {
   keepers = {
