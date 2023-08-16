@@ -1,7 +1,4 @@
-module "os" {
-  source       = "./os"
-  vm_os_simple = "${var.vm_os_simple}"
-}
+
 
 resource "azurerm_resource_group" "vm" {
   name     = "${var.resource_group_name}"
@@ -9,7 +6,10 @@ resource "azurerm_resource_group" "vm" {
   tags     = "${var.tags}"
 }
 
-
+module "os" {
+  source       = "./os"
+  vm_os_simple = "${var.vm_os_simple}"
+}
 
 resource "random_id" "vm-sa" {
   keepers = {
