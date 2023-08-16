@@ -1,0 +1,40 @@
+---
+
+- name: Setup Secret
+  command: "kubectl apply -f /tmp/secret.yaml"
+
+- name: Setup Persistent Volumes
+  command: "kubectl apply -f /tmp/pvc-mysql-wp.yaml"
+
+- name: Get PVs
+  command: "kubectl get pv"
+  register: pvoutput
+
+- name: Show PVs maked
+  debug: msg="{{ pvoutput.stdout }}"
+
+- name: Setup Mysql
+  command: "kubectl apply -f /tmp/mysql-deployment.yaml"
+
+- name: Setup Wordpress
+  command: "kubectl apply -f /tmp/wordpress-deployment.yaml"
+
+- name: Setup Cert Manager
+  command: "kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
+
+- name: Get svc
+  command: "kubectl get svc"
+  register: svcoutput
+
+- name: Show svc output
+  debug: msg="{{ svcoutput }}"
+
+# - name: Setup ingress
+#   command: "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml"
+#   #when: result.changed
+
+
+
+
+
+

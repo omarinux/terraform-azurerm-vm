@@ -1,0 +1,17 @@
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: hosts
+    dest: /tmp/hosts
+    mode: '0755'
+
+- name: Copy files from several directories
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/"
+    owner: root
+    mode: "0755"
+  loop: "{{ files }}"
+  vars:
+    files:
+      - "wordpress/"
+

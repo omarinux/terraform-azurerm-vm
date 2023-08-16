@@ -1,0 +1,19 @@
+---
+# tasks file for kubernetes.worker
+
+- name: "Reset worker"
+  command: "kubeadm reset --force"
+
+- name: Modify Hosts file
+  shell:
+    cmd: grep -Fxvf /etc/hosts /tmp/hosts >> /etc/hosts
+  ignore_errors: true
+
+# - name: Remove tmp Hosts file
+#   ansible.builtin.file:
+#     path: /tmp/hosts
+#     state: absent
+
+- name: "Join the worker to master"
+  command: "{{ hostvars.Dummy_Host.join_cmd }}"
+  #when: result.changed

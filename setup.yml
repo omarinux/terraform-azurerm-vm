@@ -1,0 +1,44 @@
+#- hosts: all
+#  remote_user: root
+#  become: true
+#  become_method: sudo
+#  roles:
+#    - hostsfile
+
+#- hosts: Master_Node
+#  #remote_user: omar
+#  remote_user: root
+#  become: true
+#  become_method: sudo
+#  roles:
+#    - kubernetes.master
+#
+#- hosts: Worker_Node
+#  #remote_user: omar
+#  remote_user: root
+#  become: true
+#  become_method: sudo
+#  roles:
+#    - kubernetes.worker
+#
+#- hosts: Master_Node
+#  #remote_user: omar
+#  remote_user: root
+#  become: true
+#  become_method: sudo
+#  tasks:
+#  - import_role:
+#        name: kubernetes.master
+#        tasks_from: web.yml
+
+- hosts: Linux Node
+  #remote_user: omar
+  remote_user: azureuser
+  become: true
+  become_method: sudo
+  roles:
+    - linux
+
+  
+
+

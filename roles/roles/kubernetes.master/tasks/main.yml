@@ -1,0 +1,76 @@
+---
+# tasks file for kubernetes.master
+
+- name: Modify Hosts file
+  shell:
+    cmd: grep -Fxvf /etc/hosts /tmp/hosts >> /etc/hosts
+  ignore_errors: true
+
+# - name: Remove tmp Hosts file
+#   ansible.builtin.file:
+#     path: /tmp/hosts
+#     state: absent
+
+- name: Grab hostname
+  shell:
+    cmd: "hostname"
+  register: hostnamemaster
+
+- name: Check if kubernetes master is already configured
+  shell:
+    cmd: "kubectl get nodes|grep {{hostnamemaster}} | awk '{print $1}'"
+  register: checkcluster
+
+- name: Debug checkcluster
+  debug:
+   var: checkcluster
+
+- name: Debug hostname
+  debug:
+   var: hostnamemaster.stdout
+
+- name: Start the kubernetes master
+  shell:
+    cmd: "kubeadm init --pod-network-cidr=10.244.0.0/16"
+  when: checkcluster.stdout != {{hostnamemaster}}
+  ignore_errors: true
+
+
+- name: Create folder for kube
+  file:
+    path: $HOME/.kube
+    state: directory
+  register: kube_dir
+
+- name: Delete admin.conf before copy
+  file:
+    path: "$HOME/.kube/config"
+    state: absent
+
+- name: Copy admin.conf file to kube
+  copy:
+    src: "/etc/kubernetes/admin.conf"
+    dest: "$HOME/.kube/config"
+    owner: "{{ kube_dir.owner }}"
+    group: "{{ kube_dir.group }}"
+    remote_src: yes
+  #when: kube_dir.changed
+
+
+- name: Get join command
+  shell:
+    cmd: "kubeadm token create --print-join-command"
+  register: output
+
+
+- name: "Dummy host to register join command"
+  add_host:
+    name: Dummy_Host
+    join_cmd: "{{ output.stdout }}"
+  when: output.changed
+
+- name: Setup flannel network
+  command: "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+  #when: result.changed
+
+
