@@ -345,12 +345,12 @@ resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
 
 resource "local_file" "ansible_inventory_linux" {
   depends_on = [
-        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows
+        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_linux,
       ]
   content = templatefile("${path.module}/inventory_linux.tmpl",
     {
      linux_vms_name = azurerm_virtual_machine.vm-linux.*.name,
-     linux_vms_ip = azurerm_virtual_machine.vm-linux.*.publicIP
+     linux_vms_ip = azurerm_public_ip.vm_linux.*.ip_address
     }
   )
   filename = "inventory_linux"
@@ -358,7 +358,7 @@ resource "local_file" "ansible_inventory_linux" {
 
 resource "local_file" "ansible_inventory_windows" {
   depends_on = [
-        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows
+        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_windows,
       ]
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
