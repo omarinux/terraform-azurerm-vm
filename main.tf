@@ -336,7 +336,7 @@ resource "local_file" "ansible_inventory_windows" {
       ]
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
-     windows_vms_name = azurerm_virtual_machine.vm_windows.*.name,
+     windows_vms_name = azurerm_virtual_machine.vm-windows.*.name,
      windows_vms_ip = azurerm_virtual_machine.vm-windows.*.public_ip_address
     }
   )
