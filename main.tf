@@ -60,7 +60,7 @@ resource "azurerm_public_ip" "vm_windows" {
 resource "azurerm_network_interface" "vm_linux" {
   count                     = "${var.vm_os_offer != "WindowsServer"}" ? var.nb_instances : 0
   name                      = "nic-${var.vm_hostname}-${count.index}"
-  location                  = "${azurerm_resource_group.vm.location}"
+  location                  = var.location
   resource_group_name       = var.resource_group_name
   #etwork_security_group_id = "${var.nsg_id}"
 
@@ -76,7 +76,7 @@ resource "azurerm_network_interface" "vm_linux" {
 resource "azurerm_network_interface" "vm_windows" {
   count                     = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_instances : 0
   name                      = "nic-${var.vm_hostname}-${count.index}"
-  location                  = "${azurerm_resource_group.vm.location}"
+  location                  = var.location
   resource_group_name       = var.resource_group_name
   #etwork_security_group_id = "${var.nsg_id}"
 
