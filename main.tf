@@ -350,7 +350,7 @@ resource "local_file" "ansible_inventory_linux" {
   content = templatefile("${path.module}/inventory_linux.tmpl",
     {
      linux_vms_name = azurerm_virtual_machine.vm-linux.*.name,
-     linux_vms_ip = azurerm_public_ip.vm_linux.*.ip_address
+     linux_vms_ip = azurerm_virtual_machine.vm-linux.*.publicIP
     }
   )
   filename = "inventory_linux"
