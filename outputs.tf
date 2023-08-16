@@ -5,17 +5,22 @@ output "vm_ids" {
 
 output "network_interface_ids" {
   description = "ids of the vm nics provisoned."
-  value       = "${azurerm_network_interface.vm.*.id}"
+  value       = "${concat(azurerm_network_interface.vm_linux.*.id, azurerm_network_interface.vm_windows.*.id)}"
 }
 
 output "network_interface_private_ip" {
   description = "private ip addresses of the vm nics"
-  value       = "${azurerm_network_interface.vm.*.private_ip_address}"
+  value       = "${concat(azurerm_network_interface.vm_linux.*.private_ip_address, azurerm_network_interface.vm_windows.*.private_ip_address)}"
 }
 
-output "public_ip_address" {
+output "public_ip_address_linux" {
   description = "The actual ip address allocated for the resource."
-  value       = "${azurerm_public_ip.vm.*.ip_address}"
+  value       = "${azurerm_public_ip.vm_linux.*.ip_address}"
+}
+
+output "public_ip_address_windows" {
+  description = "The actual ip address allocated for the resource."
+  value       = "${azurerm_public_ip.vm_windows.*.ip_address}"
 }
 
 /* output "availability_set_id" {
