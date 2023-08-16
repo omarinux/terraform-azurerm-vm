@@ -85,7 +85,7 @@ resource "azurerm_network_interface" "vm_windows" {
     subnet_id                     = "${var.vnet_subnet_id}"
     private_ip_address_allocation = "Dynamic"
     #public_ip_address_id          = "${element(azurerm_public_ip.vm_windows.*.id, count.index)}"
-    public_ip_address_id          = azurerm_public_ip.vm_windows[count.index].id
+    public_ip_address_id          = "${element(azurerm_public_ip.vm_windows[count.index].id)}"
   }
 }
 
@@ -95,7 +95,7 @@ resource "azurerm_network_security_group" "nsg" {
   resource_group_name = var.resource_group_name
 
   security_rule {
-    name                       = "SSHWEBRDP"
+    name                       = "WEB"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
@@ -107,7 +107,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
   security_rule {
-    name                       = "SSHWEBRDP"
+    name                       = "SSH"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
@@ -119,7 +119,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
   security_rule {
-    name                       = "SSHWEBRDP"
+    name                       = "RDP"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
