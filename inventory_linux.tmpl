@@ -1,6 +1,6 @@
 [linux]
 %{ for index, linux in linux_vms_ip ~}
-${linux[index]}
+${linux_vms_ip[index]}
 %{ endfor ~}
 
 
