@@ -370,7 +370,7 @@ resource "local_file" "ansible_inventory_windows" {
 }
 
 
-resource "null_resource" "null1" {
+resource "null_resource" "ansible_linux" {
     depends_on = [
       local_file.ansible_inventory_linux
     ]
@@ -379,7 +379,9 @@ resource "null_resource" "null1" {
     }
   
   provisioner "local-exec" {
-    command = "ansible-playbook ${path.module}/setup.yml"
+    count                         = "${var.vm_os_offer != "WindowsServer" ? 1 : 0}"
+    
+    command = "ansible-playbook -i inventory_linux ${path.module}/setup.yml"
     }
 
 }
