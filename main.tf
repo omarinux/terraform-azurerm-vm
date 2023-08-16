@@ -379,7 +379,7 @@ resource "null_resource" "null1" {
     }
   
   provisioner "local-exec" {
-    command = "ansible-playbook setup.yml"
+    command = "ansible-playbook ${path.module}/setup.yml"
     }
 
 }
