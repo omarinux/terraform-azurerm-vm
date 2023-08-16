@@ -368,3 +368,18 @@ resource "local_file" "ansible_inventory_windows" {
   )
   filename = "inventory_windows"
 }
+
+
+resource "null_resource" "null1" {
+    depends_on = [
+      local_file.ansible_inventory_linux
+    ]
+  provisioner "local-exec" {
+    command = "sleep 120"
+    }
+  
+  provisioner "local-exec" {
+    command = "ansible-playbook setup.yml"
+    }
+
+}
