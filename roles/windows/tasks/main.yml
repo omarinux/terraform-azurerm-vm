@@ -1,0 +1,45 @@
+---
+- name: Set Timezone
+  win_timezone:
+    timezone: W. Europe Standard Time
+
+- name: Change Region
+  win_region:
+    location: 223
+    format: fr-FR
+    unicode_language: fr-FR
+  register: result
+
+- name: Change Region - Reboot
+  win_reboot:
+  when: result.restart_required
+
+- name: Create directory structure
+  win_file:
+    path: C:\Temp\folder
+    state: directory
+
+- name: Touch a file
+  win_file:
+    path: C:\Temp\folder\foo.txt
+    state: touch
+
+- name: install Google Chrome
+  chocolatey.chocolatey.win_chocolatey:
+    name: "googlechrome"
+    state: present
+#  become: false
+    ignore_errors: yes
+
+- name: Include DC yml when DC tag is defined
+  include: dc.yml
+  when: tags.service == "dc"
+  #tags:
+  #  - dc
+
+- name: display tags variable
+  debug: var=tags.service
+
+- name: Include WEBSERVER yml when WEBSERVER tag is defined
+  include: webserver.yml
+  when: tags.service == "webserver"

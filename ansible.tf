@@ -43,3 +43,32 @@ resource "null_resource" "ansible_linux" {
     }
 
 }
+
+resource "null_resource" "terraform_sample"{
+  count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
+  
+  triggers = {
+    last_windows_update = "2020-03-24.008"
+  }
+
+  connection {
+    type     = "winrm"
+    user     = " DOMAIN \\MServiceAdonis"
+    password = "***"
+    host     = "xxxadonis4.DOMAIN.local"
+    timeout  = "20s"
+    https    = false
+    use_ntlm = true
+    insecure = true
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/windows"
+    destination = "c:/windows/temp"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/winrm.ps1"
+    ]
+  }
+}

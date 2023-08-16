@@ -1,0 +1,51 @@
+---
+- name: Install IIS Web-Server with sub features and management tools
+  ansible.windows.win_feature:
+    name: Web-Server
+    state: present
+    include_sub_features: yes
+    include_management_tools: yes
+  register: win_feature
+
+- name: Make Application Dir Foo Exists
+  win_file:
+    path: c:\inetpub\foo
+    state: directory
+
+- name: Copy default.aspx on Foo Web Application
+  win_copy:
+    src: /Users/apple/Development/ansible-aw/AWS/roles/test/file/default.aspx
+    dest: c:\inetpub\foo\default.aspx
+
+- name: Check Foo Web Application Exists
+  win_iis_webapplication:
+    name: foo
+    physical_path: c:\inetpub\foo
+    site: Default Web Site
+
+- name: Check Foo Web Application Responds Properly
+  ansible.windows.win_powershell:
+    script: |
+      $req = Invoke-WebRequest -Uri "localhost/foo"
+      $req.StatusCode
+    register: webresponse
+    ignore_errors: yes
+
+- name: Print Web Application response 200
+  ansible.builtin.debug:
+    var: webresponse.output
+
+#- name: Check web application resonse2
+#  uri:
+#    url: http://localhost/foo
+#    return_content: yes
+#  register: uri_out
+#  delegate_to: localhost
+#  until: uri_out.content | search("Hello from")
+#  retries: 3
+#  ignore_errors: yes
+
+- debug:
+    msg: web application is available at http://{{public_dns_name}}/foo
+    #msg: web application is available at http://{{ publicipwindows.output }}/foo
+    ignore_errors: yes

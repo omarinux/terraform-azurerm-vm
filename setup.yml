@@ -1,10 +1,20 @@
-- hosts: linux
+- name: Setup Linux Server
+  hosts: linux
   #remote_user: omar
   remote_user: azureuser
   become: true
   become_method: sudo
   roles:
     - linux
+
+- name: Setup Windows Server
+  hosts: windows
+  gather_facts: true
+  remote_user: azureuser
+  vars_files:
+    - roles/windows/vars/main.yml
+  roles:
+    - windows
 
   
 
