@@ -1,4 +1,4 @@
 [windows]
-%{ for index, windows in windows_vms_name ~}
-${windows} ${windows_vms_ip[index]}
+%{ for index, windows in windows_vms_ip ~}
+${windows_vms_ip[index]}
 %{ endfor ~}
