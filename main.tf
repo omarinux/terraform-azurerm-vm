@@ -27,6 +27,98 @@ resource "azurerm_storage_account" "vm-sa" {
   tags                     = "${var.tags}"
 }
 
+
+/* resource "azurerm_availability_set" "vm" {
+  name                         = "${var.vm_hostname}-avset"
+  location                     = "${azurerm_resource_group.vm.location}"
+  resource_group_name          = "${azurerm_resource_group.vm.name}"
+  platform_fault_domain_count  = 2
+  platform_update_domain_count = 2
+  managed                      = true
+} */
+
+resource "azurerm_public_ip" "vm_linux" {
+  count                        = "${var.vm_os_offer != "WindowsServer"}" ? var.nb_public_ip : 0
+  name                         = "${var.vm_hostname}-${count.index}-publicIP"
+  location                     = "${var.location}"
+  resource_group_name          = "${azurerm_resource_group.vm.name}"
+  allocation_method            = "${var.public_ip_address_allocation}"
+  domain_name_label            = "${element(var.public_ip_dns, count.index)}"
+}
+
+resource "azurerm_public_ip" "vm_windows" {
+  count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
+  name                         = "${var.vm_hostname}-${count.index}-publicIP"
+  location                     = "${var.location}"
+  resource_group_name          = "${azurerm_resource_group.vm.name}"
+  allocation_method            = "${var.public_ip_address_allocation}"
+  domain_name_label            = "${element(var.public_ip_dns, count.index)}"
+}
+
+resource "azurerm_network_interface" "vm_linux" {
+  count                     = "${var.nb_instances}"
+  name                      = "nic-${var.vm_hostname}-${count.index}"
+  location                  = "${azurerm_resource_group.vm.location}"
+  resource_group_name       = "${azurerm_resource_group.vm.name}"
+  #etwork_security_group_id = "${var.nsg_id}"
+
+  ip_configuration {
+    name                          = "ipconfig${count.index}"
+    subnet_id                     = "${var.vnet_subnet_id}"
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = "${element(azurerm_public_ip.vm_linux.*.id, count.index)}"
+  }
+}
+
+resource "azurerm_network_interface" "vm_windows" {
+  count                     = "${var.nb_instances}"
+  name                      = "nic-${var.vm_hostname}-${count.index}"
+  location                  = "${azurerm_resource_group.vm.location}"
+  resource_group_name       = "${azurerm_resource_group.vm.name}"
+  #etwork_security_group_id = "${var.nsg_id}"
+
+  ip_configuration {
+    name                          = "ipconfig${count.index}"
+    subnet_id                     = "${var.vnet_subnet_id}"
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = "${element(azurerm_public_ip.vm_windows.*.id, count.index)}"
+    #ublic_ip_address_id = azurerm_public_ip.public_ip[count.index].id
+  }
+}
+
+resource "azurerm_network_security_group" "nsg" {
+  location            = "${var.location}"
+  name                = "nsg01"
+  resource_group_name = "${azurerm_resource_group.vm.name}"
+
+  security_rule {
+    name                       = "SSHWEBRDP"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80,22,3389"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_network_interface_security_group_association" "test_linux" {
+  count = var.nb_instances
+
+  network_interface_id      = azurerm_network_interface.vm_linux[count.index].id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "test_windows" {
+  count = var.nb_instances
+
+  network_interface_id      = azurerm_network_interface.vm_windows[count.index].id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+
 resource "azurerm_virtual_machine" "vm-linux" {
   #count                         = "${!contains(list("${var.vm_os_simple}","${var.vm_os_offer}"), "WindowsServer") && var.is_windows_image != "true" && var.data_disk == "false" ? var.nb_instances : 0}"
   count                         = "${var.vm_os_offer != "WindowsServer" && var.is_windows_image != "true" && var.data_disk == "false" ? var.nb_instances : 0}"
@@ -35,7 +127,8 @@ resource "azurerm_virtual_machine" "vm-linux" {
   resource_group_name           = "${azurerm_resource_group.vm.name}"
   #availability_set_id           = "${azurerm_availability_set.vm.id}"
   vm_size                       = "${var.vm_size}"
-  network_interface_ids         = ["${element(azurerm_network_interface.vm.*.id, count.index)}"]
+  network_interface_ids         = ["${element(azurerm_network_interface.vm_linux.*.id, count.index)}"]
+  #network_interface_ids = [azurerm_network_interface.master[count.index].id]
   delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
 
   storage_image_reference {
@@ -83,7 +176,7 @@ resource "azurerm_virtual_machine" "vm-linux-with-datadisk" {
   resource_group_name           = "${azurerm_resource_group.vm.name}"
   #availability_set_id           = "${azurerm_availability_set.vm.id}"
   vm_size                       = "${var.vm_size}"
-  network_interface_ids         = ["${element(azurerm_network_interface.vm.*.id, count.index)}"]
+  network_interface_ids         = ["${element(azurerm_network_interface.vm_linux.*.id, count.index)}"]
   delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
 
   storage_image_reference {
@@ -139,7 +232,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
   resource_group_name           = "${azurerm_resource_group.vm.name}"
   #availability_set_id           = "${azurerm_availability_set.vm.id}"
   vm_size                       = "${var.vm_size}"
-  network_interface_ids         = ["${element(azurerm_network_interface.vm.*.id, count.index)}"]
+  network_interface_ids         = ["${element(azurerm_network_interface.vm_windows.*.id, count.index)}"]
   delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
 
   storage_image_reference {
@@ -180,7 +273,7 @@ resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
   resource_group_name           = "${azurerm_resource_group.vm.name}"
   #availability_set_id           = "${azurerm_availability_set.vm.id}"
   vm_size                       = "${var.vm_size}"
-  network_interface_ids         = ["${element(azurerm_network_interface.vm.*.id, count.index)}"]
+  network_interface_ids         = ["${element(azurerm_network_interface.vm_windows.*.id, count.index)}"]
   delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
 
   storage_image_reference {
@@ -222,66 +315,6 @@ resource "azurerm_virtual_machine" "vm-windows-with-datadisk" {
   }
 }
 
-/* resource "azurerm_availability_set" "vm" {
-  name                         = "${var.vm_hostname}-avset"
-  location                     = "${azurerm_resource_group.vm.location}"
-  resource_group_name          = "${azurerm_resource_group.vm.name}"
-  platform_fault_domain_count  = 2
-  platform_update_domain_count = 2
-  managed                      = true
-} */
-
-resource "azurerm_public_ip" "vm" {
-  count                        = "${var.nb_public_ip}"
-  name                         = "${var.vm_hostname}-${count.index}-publicIP"
-  location                     = "${var.location}"
-  resource_group_name          = "${azurerm_resource_group.vm.name}"
-  allocation_method            = "${var.public_ip_address_allocation}"
-  domain_name_label            = "${element(var.public_ip_dns, count.index)}"
-}
-
-resource "azurerm_network_interface" "vm" {
-  count                     = "${var.nb_instances}"
-  name                      = "nic-${var.vm_hostname}-${count.index}"
-  location                  = "${azurerm_resource_group.vm.location}"
-  resource_group_name       = "${azurerm_resource_group.vm.name}"
-  #etwork_security_group_id = "${var.nsg_id}"
-
-  ip_configuration {
-    name                          = "ipconfig${count.index}"
-    subnet_id                     = "${var.vnet_subnet_id}"
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = "${element(azurerm_public_ip.vm.*.id, count.index)}"
-  }
-}
-
-resource "azurerm_network_security_group" "nsg" {
-  location            = "${var.location}"
-  name                = "nsg01"
-  resource_group_name = "${azurerm_resource_group.vm.name}"
-
-  security_rule {
-    name                       = "SSHWEBRDP"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80,22,3389"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
-
-resource "azurerm_network_interface_security_group_association" "test" {
-  count = var.nb_instances
-
-  network_interface_id      = azurerm_network_interface.vm[count.index].id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
-
-
 
 resource "local_file" "ansible_inventory_linux" {
   depends_on = [
@@ -290,7 +323,7 @@ resource "local_file" "ansible_inventory_linux" {
   content = templatefile("${path.module}/inventory_linux.tmpl",
     {
      linux_vms_name = azurerm_virtual_machine.vm-linux.*.name,
-     linux_vms_ip = azurerm_virtual_machine.vm-linux.*.network_interface_ids.ip_configuration.public_ip_address
+     linux_vms_ip = azurerm_virtual_machine.vm-linux.*.public_ip_address
     }
   )
   filename = "inventory_linux"
@@ -303,7 +336,7 @@ resource "local_file" "ansible_inventory_windows" {
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
      windows_vms_name = azurerm_virtual_machine.vm-windows.*.name,
-     windows_vms_ip = azurerm_virtual_machine.vm-windows.*.network_interface_ids.ip_configuration.public_ip_address
+     windows_vms_ip = azurerm_virtual_machine.vm-windows.*.public_ip_address
     }
   )
   filename = "inventory_windows"
