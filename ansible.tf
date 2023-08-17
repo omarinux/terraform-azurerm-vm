@@ -47,15 +47,15 @@ resource "null_resource" "ansible_linux" {
 resource "null_resource" "terraform_sample"{
   count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
   
-  triggers = {
+  /* triggers = {
     last_windows_update = "2020-03-24.008"
-  }
+  } */
 
   connection {
     type     = "winrm"
-    user     = " DOMAIN \\MServiceAdonis"
-    password = "***"
-    host     = "xxxadonis4.DOMAIN.local"
+    user     = "azureuser"
+    password = "Pallone2023!!!"
+    host     = element(azurerm_public_ip.vm_windows.*.ip_address, 0)
     timeout  = "20s"
     https    = false
     use_ntlm = true
@@ -68,7 +68,7 @@ resource "null_resource" "terraform_sample"{
   }
   provisioner "remote-exec" {
     inline = [
-      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/winrm.ps1"
+      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
     ]
   }
 }
