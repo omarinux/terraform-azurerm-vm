@@ -56,7 +56,7 @@ resource "null_resource" "ansible_linux" {
 
 }
 
-# already on custom image
+/* # already on custom image
 resource "null_resource" "terraform_sample"{
   count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
@@ -66,7 +66,7 @@ resource "null_resource" "terraform_sample"{
   
   /* triggers = {
     last_windows_update = "2020-03-24.008"
-  } */
+  } 
 
   connection {
     type     = "winrm"
@@ -91,7 +91,7 @@ resource "null_resource" "terraform_sample"{
   }
 }
 
-
+ */
 
 resource "null_resource" "ansible_windows" {
   
