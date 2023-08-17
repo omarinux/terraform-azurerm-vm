@@ -56,7 +56,8 @@ resource "null_resource" "ansible_linux" {
 
 }
 
-resource "null_resource" "terraform_sample"{
+# already on custom image
+/* resource "null_resource" "terraform_sample"{
   count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
   depends_on = [
@@ -65,7 +66,7 @@ resource "null_resource" "terraform_sample"{
   
   /* triggers = {
     last_windows_update = "2020-03-24.008"
-  } */
+  } 
 
   connection {
     type     = "winrm"
@@ -88,7 +89,7 @@ resource "null_resource" "terraform_sample"{
       "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/ConfigureRemotingForAnsible.ps1"
     ]
   }
-}
+} */
 
 
 
