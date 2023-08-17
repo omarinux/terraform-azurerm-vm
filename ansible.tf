@@ -73,7 +73,7 @@ resource "null_resource" "terraform_sample"{
   } */
   provisioner "remote-exec" {
     inline = [
-      "powershell.exe echo ciao" #-ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
+      "powershell.exe mkdir c:/users/azureuser/desktop/ciao" #-ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
     ]
   }
 }
