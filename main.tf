@@ -107,18 +107,6 @@ resource "azurerm_network_security_group" "nsg_windows" {
   }
 
   security_rule {
-    name                       = "SSH"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
     name                       = "RDP"
     priority                   = 1003
     direction                  = "Inbound"
@@ -131,7 +119,7 @@ resource "azurerm_network_security_group" "nsg_windows" {
   }
 
   security_rule {
-    name                       = "WINRM"
+    name                       = "WINRM85"
     priority                   = 1004
     direction                  = "Inbound"
     access                     = "Allow"
@@ -143,7 +131,7 @@ resource "azurerm_network_security_group" "nsg_windows" {
   }
 
   security_rule {
-    name                       = "WINRM"
+    name                       = "WINRM68"
     priority                   = 1005
     direction                  = "Inbound"
     access                     = "Allow"
@@ -157,11 +145,11 @@ resource "azurerm_network_security_group" "nsg_windows" {
 
 resource "azurerm_network_security_group" "nsg_linux" {
   location            = "${var.location}"
-  name                = "nsg_linux"
+  name                = "nsglinux"
   resource_group_name = var.resource_group_name
 
   security_rule {
-    name                       = "WEB"
+    name                       = "WEBLINUX"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
@@ -173,49 +161,13 @@ resource "azurerm_network_security_group" "nsg_linux" {
   }
 
   security_rule {
-    name                       = "SSH"
+    name                       = "SSHLINUX"
     priority                   = 1002
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "RDP"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "3389"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "WINRM"
-    priority                   = 1004
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5985"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "WINRM"
-    priority                   = 1005
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5986"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
