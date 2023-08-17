@@ -1,7 +1,7 @@
 
 resource "local_file" "ansible_inventory_linux" {
   depends_on = [
-        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_linux,
+        azurerm_virtual_machine.vm-linux, azurerm_public_ip.vm_linux
       ]
   content = templatefile("${path.module}/inventory_linux.tmpl",
     {
@@ -14,7 +14,7 @@ resource "local_file" "ansible_inventory_linux" {
 
 resource "local_file" "ansible_inventory_windows" {
   depends_on = [
-        azurerm_virtual_machine.vm-linux, azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_windows,
+        azurerm_public_ip.vm_windows
       ]
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
@@ -45,7 +45,7 @@ resource "null_resource" "ansible_linux" {
 }
 
 resource "null_resource" "terraform_sample"{
-  #count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
+  count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
   depends_on = [
         azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_windows,
