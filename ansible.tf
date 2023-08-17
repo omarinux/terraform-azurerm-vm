@@ -57,12 +57,13 @@ resource "null_resource" "terraform_sample"{
 
   connection {
     type     = "winrm"
+    port = 5985 
     user     = "azureuser"
     password = "Pallone2023!!!"
     host     = azurerm_public_ip.vm_windows[count.index].ip_address
     timeout  = "20s"
     https    = false
-    use_ntlm = true
+    use_ntlm = false
     insecure = true
   }
 
