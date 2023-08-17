@@ -68,12 +68,32 @@ resource "null_resource" "terraform_sample"{
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/windows/chocolatey.org_install.ps1"
-    destination = "c:/windows/temp/chocolatey.org_install.ps1"
+    source      = "${path.module}/scripts/windows/ConfigureRemotingForAnsible.ps1"
+    destination = "c:/windows/temp/ConfigureRemotingForAnsible.ps1"
   }
   provisioner "remote-exec" {
     inline = [
-      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
+      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/ConfigureRemotingForAnsible.ps1"
     ]
   }
+}
+
+
+
+resource "null_resource" "ansible_windows" {
+  
+  count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
+  
+    depends_on = [
+      null_resource.null_resource.terraform_sample
+    ]
+  provisioner "local-exec" {
+    command = "sleep 120"
+    }
+  
+  provisioner "local-exec" {
+    
+    command = "ansible-playbook -i inventory_windows ${path.module}/setup.yml"
+    }
+
 }
