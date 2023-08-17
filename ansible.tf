@@ -70,7 +70,7 @@ resource "null_resource" "terraform_sample"{
 
   connection {
     type     = "winrm"
-    port = 5986
+    port = 5985
     user     = "azureuser"
     password = "Pallone2023!!!"
     host     = azurerm_public_ip.vm_windows[count.index].ip_address
