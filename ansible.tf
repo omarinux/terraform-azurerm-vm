@@ -105,7 +105,7 @@ resource "null_resource" "ansible_windows" {
   
   provisioner "local-exec" {
     
-    command = "ansible-playbook -i inventory_windows ${path.module}/setup.yml"
+    command = "ansible-playbook -i inventory_windows_for ${path.module}/setup.yml"
     }
 
 }
