@@ -16,6 +16,11 @@ resource "local_file" "ansible_inventory_windows" {
   depends_on = [
         azurerm_public_ip.vm_windows
       ]
+
+  triggers = {
+    value = azurerm_public_ip.vm_windows.id
+  }
+
   content = templatefile("${path.module}/inventory_windows.tmpl",
     {
      #windows_vms_name = azurerm_virtual_machine.vm-windows.*.name,
