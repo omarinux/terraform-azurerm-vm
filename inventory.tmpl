@@ -1,0 +1,4 @@
+[windows]
+%{ for index, vms in publicvm-names ~}
+${vms} ansible_host=${public-ip[index]} 
+%{ endfor ~}

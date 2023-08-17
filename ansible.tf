@@ -27,6 +27,21 @@ resource "local_file" "ansible_inventory_windows" {
 }
 
 
+resource "local_file" "AnsibleInventory" {
+ content = templatefile("${path.module}/inventory.tmpl",
+   {
+     vm-names                   = [for k, p in azurerm_virtual_machine.vm_windows: p.name],
+#     private-ip                 = [for k, p in azurerm_network_interface.nic: p.private_ip_address],
+#     publicvm-names             = [for k, p in azurerm_virtual_machine.publicvm: p.name],
+#     publicvm-private-ip        = [for k, p in azurerm_network_interface.publicnic: p.private_ip_address],
+     public-ip                  = [for k, p in azurerm_public_ip.vm_windows: p.ip_address],
+#     public-dns                 = [for k, p in azurerm_public_ip.publicip: p.fqdn],
+   }
+ )
+ filename = "inventory_windows_for"
+}
+
+
 resource "null_resource" "ansible_linux" {
   
   #count                         = "${var.vm_os_offer != "WindowsServer" ? 1 : 0}"
