@@ -44,15 +44,15 @@
   ignore_errors: yes
 
 
-- name: Include DC yml when DC tag is defined
-  include: dc.yml
-  when: tags.service == "dc"
-  #tags:
-  #  - dc
+# - name: Include DC yml when DC tag is defined
+#   include: dc.yml
+#   when: tags.service == "dc"
+#   #tags:
+#   #  - dc
 
-- name: display tags variable
-  debug: var=tags.service
+# - name: display tags variable
+#   debug: var=tags.service
 
-- name: Include WEBSERVER yml when WEBSERVER tag is defined
-  include: webserver.yml
-  when: tags.service == "webserver"
+# - name: Include WEBSERVER yml when WEBSERVER tag is defined
+#   include: webserver.yml
+#   when: tags.service == "webserver"
