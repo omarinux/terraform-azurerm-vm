@@ -10,7 +10,12 @@
     unicode_language: fr-FR
   register: result
 
-- name: Change Region - Reboot
+- name: Install .Net
+  ansible.windows.win_optional_feature:
+    name: NetFx4
+    state: present
+
+- name: Change Region and .Net - Reboot
   win_reboot:
   when: result.restart_required
 
@@ -23,11 +28,6 @@
   win_file:
     path: C:\Temp\folder\foo.txt
     state: touch
-
-- name: Install .Net
-  ansible.windows.win_optional_feature:
-    name: NetFx4
-    state: present
 
 - name: Install chocolatey
   win_chocolatey:
