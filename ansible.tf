@@ -40,7 +40,7 @@ resource "local_file" "AnsibleInventory" {
 
 resource "null_resource" "ansible_linux" {
   
-  #count                         = "${var.vm_os_offer != "WindowsServer" ? 1 : 0}"
+  count                         = "${var.vm_os_offer != "WindowsServer" ? 1 : 0}"
   
     depends_on = [
       local_file.ansible_inventory_linux, azurerm_virtual_machine.vm-linux
