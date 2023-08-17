@@ -45,7 +45,7 @@ resource "null_resource" "ansible_linux" {
 }
 
 resource "null_resource" "terraform_sample"{
-  count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
+  count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
   depends_on = [
         azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_windows,
