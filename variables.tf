@@ -148,8 +148,8 @@ variable "boot_diagnostics_sa_type" {
 }
 
 variable "managed_image_name" {
-   description = "myPackerImage"
+   default = "myPackerImage"
 }
 variable "managed_image_resource_group_name" {
-   description = "myPackerGroup"
+   default = "myPackerGroup"
 }
