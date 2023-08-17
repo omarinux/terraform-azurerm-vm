@@ -67,13 +67,13 @@ resource "null_resource" "terraform_sample"{
     insecure = true
   }
 
-  /* provisioner "file" {
-    source      = "${path.module}/scripts/windows"
-    destination = "c:/windows/temp"
-  } */
+  provisioner "file" {
+    source      = "${path.module}/scripts/windows/chocolatey.org_install.ps1"
+    destination = "c:/windows/temp/chocolatey.org_install.ps1"
+  }
   provisioner "remote-exec" {
     inline = [
-      "powershell.exe mkdir c:/users/azureuser/desktop/ciao" #-ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
+      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/chocolatey.org_install.ps1"
     ]
   }
 }
