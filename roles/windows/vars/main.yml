@@ -1,5 +1,7 @@
 ansible_user: "azureuser"
 ansible_password: "Pallone2023!!!"
-ansible_port: "5986"
+ansible_port: "5985"
 ansible_connection: "winrm"
 ansible_winrm_server_cert_validation: "ignore"
+#ansible_winrm_transport: "basic"
+#ansible_winrm_scheme: "https"

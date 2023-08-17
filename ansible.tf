@@ -56,7 +56,7 @@ resource "null_resource" "ansible_linux" {
 
 }
 
-/* # already on custom image
+# already on custom image
 resource "null_resource" "terraform_sample"{
   count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
@@ -66,16 +66,16 @@ resource "null_resource" "terraform_sample"{
   
   /* triggers = {
     last_windows_update = "2020-03-24.008"
-  } 
+  } */
 
   connection {
     type     = "winrm"
-    port = 5985
+    port = 5986
     user     = "azureuser"
     password = "Pallone2023!!!"
     host     = azurerm_public_ip.vm_windows[count.index].ip_address
     timeout  = "2m"
-    https    = false
+    https    = true
     use_ntlm = false
     insecure = true
   }
@@ -86,12 +86,11 @@ resource "null_resource" "terraform_sample"{
   }
   provisioner "remote-exec" {
     inline = [
-      "powershell.exe -ExecutionPolicy Bypass -File c:/windows/temp/ConfigureRemotingForAnsible.ps1"
+      "powershell.exe winrm quickconfig -q"
     ]
   }
 }
 
- */
 
 resource "null_resource" "ansible_windows" {
   
