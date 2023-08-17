@@ -31,7 +31,7 @@ resource "null_resource" "ansible_linux" {
   count                         = "${var.vm_os_offer != "WindowsServer" ? 1 : 0}"
   
     depends_on = [
-      local_file.ansible_inventory_linux
+      local_file.ansible_inventory_linux, azurerm_virtual_machine.vm-linux
     ]
   provisioner "local-exec" {
     command = "sleep 120"
@@ -46,6 +46,10 @@ resource "null_resource" "ansible_linux" {
 
 resource "null_resource" "terraform_sample"{
   count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
+
+  depends_on = [
+        azurerm_virtual_machine.vm-windows, azurerm_public_ip.vm_windows,
+      ]
   
   /* triggers = {
     last_windows_update = "2020-03-24.008"
