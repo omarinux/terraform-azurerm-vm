@@ -61,7 +61,7 @@ resource "null_resource" "terraform_sample"{
     user     = "azureuser"
     password = "Pallone2023!!!"
     host     = azurerm_public_ip.vm_windows[count.index].ip_address
-    timeout  = "20s"
+    timeout  = "2m"
     https    = false
     use_ntlm = false
     insecure = true
