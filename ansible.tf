@@ -59,7 +59,7 @@ resource "null_resource" "terraform_sample"{
     type     = "winrm"
     user     = "azureuser"
     password = "Pallone2023!!!"
-    host     = "${element(azurerm_public_ip.vm_windows.*.id, count.index)}"
+    host     = module.windowsservers.azurerm_public_ip.vm_windows[count.index].ip_address
     timeout  = "20s"
     https    = false
     use_ntlm = true
