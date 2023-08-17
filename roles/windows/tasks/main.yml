@@ -41,7 +41,7 @@
     name: "googlechrome"
     state: present
 #  become: false
-    ignore_errors: yes
+  ignore_errors: yes
 
 
 - name: Include DC yml when DC tag is defined
