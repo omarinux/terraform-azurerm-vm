@@ -146,3 +146,10 @@ variable "boot_diagnostics_sa_type" {
   description = "(Optional) Storage account type for boot diagnostics"
   default     = "Standard_LRS"
 }
+
+variable "managed_image_name" {
+   description = "myPackerImage"
+}
+variable "managed_image_resource_group_name" {
+   description = "myPackerGroup"
+}

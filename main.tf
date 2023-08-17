@@ -11,6 +11,12 @@ module "os" {
   vm_os_simple = "${var.vm_os_simple}"
 }
 
+# Packer creates the custom image - use this to create VM
+data "azurerm_image" "customimage" {
+   name                = var.managed_image_name
+   resource_group_name = var.managed_image_resource_group_name
+}
+
 resource "random_id" "vm-sa" {
   keepers = {
     vm_hostname = "${var.vm_hostname}"
@@ -305,11 +311,12 @@ resource "azurerm_virtual_machine" "vm-windows" {
   delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
 
   storage_image_reference {
-    id        = "${var.vm_os_id}"
+    id = data.azurerm_image.customimage.id
+/*     id        = "${var.vm_os_id}"
     publisher = "${var.vm_os_id == "" ? coalesce(var.vm_os_publisher, module.os.calculated_value_os_publisher) : ""}"
     offer     = "${var.vm_os_id == "" ? coalesce(var.vm_os_offer, module.os.calculated_value_os_offer) : ""}"
     sku       = "${var.vm_os_id == "" ? coalesce(var.vm_os_sku, module.os.calculated_value_os_sku) : ""}"
-    version   = "${var.vm_os_id == "" ? var.vm_os_version : ""}"
+    version   = "${var.vm_os_id == "" ? var.vm_os_version : ""}" */
   }
 
   storage_os_disk {
