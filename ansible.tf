@@ -85,7 +85,7 @@ resource "null_resource" "ansible_windows" {
   count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
   
     depends_on = [
-      null_resource.null_resource.terraform_sample
+      null_resource.terraform_sample
     ]
   provisioner "local-exec" {
     command = "sleep 120"
