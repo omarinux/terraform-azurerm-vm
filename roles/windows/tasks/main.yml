@@ -24,12 +24,20 @@
     path: C:\Temp\folder\foo.txt
     state: touch
 
+- name: Install chocolatey
+  win_chocolatey:
+    name:
+      - chocolatey
+      - chocolatey-core.extension
+    state: present
+    
 - name: install Google Chrome
   chocolatey.chocolatey.win_chocolatey:
     name: "googlechrome"
     state: present
 #  become: false
     ignore_errors: yes
+
 
 - name: Include DC yml when DC tag is defined
   include: dc.yml
