@@ -28,6 +28,10 @@ resource "local_file" "ansible_inventory_windows" {
 
 
 resource "local_file" "AnsibleInventory" {
+ depends_on = [
+        azurerm_public_ip.vm_windows
+      ]
+ 
  content = templatefile("${path.module}/inventory.tmpl",
    {
      vm-names                   = [for k, p in azurerm_virtual_machine.vm-windows: p.name],
@@ -57,7 +61,7 @@ resource "null_resource" "ansible_linux" {
 }
 
 # already on custom image
-resource "null_resource" "terraform_sample"{
+/* resource "null_resource" "terraform_sample"{
   count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
 
   depends_on = [
@@ -66,7 +70,7 @@ resource "null_resource" "terraform_sample"{
   
   /* triggers = {
     last_windows_update = "2020-03-24.008"
-  } */
+  } 
 
   connection {
     type     = "winrm"
@@ -91,7 +95,7 @@ resource "null_resource" "terraform_sample"{
   }
 }
 
-
+ */
 resource "null_resource" "ansible_windows" {
   
   #count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
