@@ -148,8 +148,8 @@ variable "boot_diagnostics_sa_type" {
 }
 
 variable "managed_image_name" {
-   default = "myPackerImage"
+   default = "windowsServer2019base"
 }
 variable "managed_image_resource_group_name" {
-   default = "myPackerGroup"
+   default = "terraform-advancedvms"
 }
