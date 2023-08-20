@@ -100,7 +100,7 @@ resource "null_resource" "ansible_windows" {
   
   #count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
 
-  depedepends_on = [ local_file.AnsibleInventory ]  
+    depedepends_on = [ local_file.AnsibleInventory ]  
 
   provisioner "local-exec" {
     command = "sleep 180"
