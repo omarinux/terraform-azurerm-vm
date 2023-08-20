@@ -99,10 +99,9 @@ resource "null_resource" "ansible_linux" {
 resource "null_resource" "ansible_windows" {
   
   #count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
-  
-/*     depends_on = [
-      null_resource.terraform_sample
-    ] */
+
+  depedepends_on = [ local_file.AnsibleInventory ]  
+
   provisioner "local-exec" {
     command = "sleep 180"
     }
