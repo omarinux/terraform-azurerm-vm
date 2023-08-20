@@ -153,3 +153,7 @@ variable "managed_image_name" {
 variable "managed_image_resource_group_name" {
    default = "terraform-advancedvms"
 }
+
+variable "providerchoose" {
+   default = ""
+}

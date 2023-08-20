@@ -55,7 +55,7 @@ resource "azurerm_public_ip" "vm_linux" {
 }
 
 resource "azurerm_public_ip" "vm_windows" {
-  count                        = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_public_ip : 0
+  count                        = "${var.vm_os_offer == "WindowsServer" && var.providerchoose == "azure" ? var.nb_public_ip : 0}"
   name                         = "${var.vm_hostname}-${count.index}-publicIP"
   location                     = "${var.location}"
   resource_group_name          = var.resource_group_name
