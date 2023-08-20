@@ -99,16 +99,17 @@ resource "null_resource" "ansible_linux" {
 resource "null_resource" "ansible_windows" {
   
   #count                         = "${var.vm_os_offer == "WindowsServer" ? 1 : 0}"
-
-    depedepends_on = [ local_file.AnsibleInventory ]  
-
+  
+/*     depends_on = [
+      null_resource.terraform_sample
+    ] */
   provisioner "local-exec" {
     command = "sleep 180"
     }
   
   provisioner "local-exec" {
     
-    command = "ansible-playbook -i inventory_windows_for ${path.module}/setup.yml"
+    command = "ansible-playbook -i inventory_windows ${path.module}/setup.yml"
     }
 
 }
