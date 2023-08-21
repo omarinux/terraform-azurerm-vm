@@ -173,7 +173,7 @@ locals {
 
 variable "security_rules" {
   description = "A list of security rules to be created."
-  type = list(string({
+  type = list(object({
     name      = string
     priority  = number
     direction = string
