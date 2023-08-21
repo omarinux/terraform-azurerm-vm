@@ -17,6 +17,18 @@ data "azurerm_image" "customimage" {
    resource_group_name = var.managed_image_resource_group_name
 }
 
+locals {
+    desc = substr(var.vm_hostname, 4, 5)
+    os = substr(var.vm_hostname, 1, 2)
+    env = substr(var.vm_hostname, 3, 1)
+  }
+
+data "hostname" "calc" {
+   os = local.os == "NT" ? "Windows" : "Linux"
+   env = local.env == "T" ? "Test" : local.env == "P" ? "Prod" : local.env == "R" ? "Pre-Prod" : local.env == "E" ? "Edu" : false
+   category = local.desc == "AP" ? "Generic Use" : local.desc == "BK" ? "Backup" : local.desc == "CA" ? "Certification Authority" : local.desc == "WS" ? "Web Server" : false
+}
+
 resource "random_id" "vm-sa" {
   keepers = {
     vm_hostname = "${var.vm_hostname}"
@@ -25,7 +37,7 @@ resource "random_id" "vm-sa" {
   byte_length = 6
 }
 
-resource "azurerm_storage_account" "vm-sa" {
+/* resource "azurerm_storage_account" "vm-sa" {
   count                    = "${var.boot_diagnostics == "true" ? 1 : 0}"
   name                     = "bootdiag${lower(random_id.vm-sa.hex)}"
   resource_group_name      = var.resource_group_name
@@ -34,7 +46,7 @@ resource "azurerm_storage_account" "vm-sa" {
   account_replication_type = "${element(split("_", var.boot_diagnostics_sa_type),1)}"
   tags                     = "${var.tags}"
 }
-
+ */
 
 /* resource "azurerm_availability_set" "vm" {
   name                         = "${var.vm_hostname}-avset"
@@ -96,8 +108,9 @@ resource "azurerm_network_interface" "vm_windows" {
 }
 
 resource "azurerm_network_security_group" "nsg_windows" {
+  count               = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_instances : 0
   location            = "${var.location}"
-  name                = "nsg_windows"
+  name                = "nsgwin-${var.vm_hostname}-${count.index}"
   resource_group_name = var.resource_group_name
 
   security_rule {
@@ -190,7 +203,7 @@ resource "azurerm_network_interface_security_group_association" "test_windows" {
   count = "${var.vm_os_offer == "WindowsServer"}" ? var.nb_instances : 0
 
   network_interface_id      = azurerm_network_interface.vm_windows[count.index].id
-  network_security_group_id = azurerm_network_security_group.nsg_windows.id
+  network_security_group_id = azurerm_network_security_group.nsg_windows[count.index].id
 }
 
 
