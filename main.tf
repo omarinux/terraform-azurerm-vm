@@ -103,53 +103,21 @@ resource "azurerm_network_security_group" "nsg_windows" {
   name                = "nsgwin-${var.vm_hostname}-${count.index}"
   resource_group_name = var.resource_group_name
 
-  security_rule {
-    name                       = "WEB"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+  dynamic "security_rule" {
+  for_each = { for sg in var.security_rules : sg.name => sg } 
+  content {
+     name      = each.value.name
+     priority  = each.value.priority
+     direction = each.value.direction 
+     access    = each.value.access
+     protocol  = each.value.protocol
+     source_port_range = each.value.source_port_range
+     destination_port_range = each.value.destination_port_range
+     source_address_prefix = each.value.source_address_prefix
+     destination_address_prefix = each.value.destination_address_prefix
 
-  security_rule {
-    name                       = "RDP"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "3389"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
   }
-
-  security_rule {
-    name                       = "WINRM85"
-    priority                   = 1004
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5985"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "WINRM68"
-    priority                   = 1005
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5986"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+ }
 }
 
 resource "azurerm_network_security_group" "nsg_linux" {

@@ -169,3 +169,19 @@ locals {
    env = local.env == "T" ? "Test" : local.env == "P" ? "Prod" : local.env == "R" ? "Pre-Prod" : local.env == "E" ? "Edu" : false
    category = local.desc == "AP" ? "Generic Use" : local.desc == "BK" ? "Backup" : local.desc == "CA" ? "Certification Authority" : local.desc == "WS" ? "Web Server" : false
 } */
+
+
+variable "security_rules" {
+  description = "A list of security rules to be created."
+  type = list(object({
+    name      = string
+    priority  = number
+    direction = string
+    access    = string
+    protocol  = string
+    source_port_range = string
+    destination_port_range = string
+    source_address_prefix = string
+    destination_address_prefix = string
+  }))
+}
