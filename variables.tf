@@ -157,3 +157,15 @@ variable "managed_image_resource_group_name" {
 variable "providerchoose" {
    default = ""
 }
+
+locals {
+    desc = substr(var.vm_hostname, 4, 5)
+    os = substr(var.vm_hostname, 1, 2)
+    env = substr(var.vm_hostname, 3, 1)
+  }
+
+variable "calchostname" {
+   os = local.os == "NT" ? "Windows" : "Linux"
+   env = local.env == "T" ? "Test" : local.env == "P" ? "Prod" : local.env == "R" ? "Pre-Prod" : local.env == "E" ? "Edu" : false
+   category = local.desc == "AP" ? "Generic Use" : local.desc == "BK" ? "Backup" : local.desc == "CA" ? "Certification Authority" : local.desc == "WS" ? "Web Server" : false
+}

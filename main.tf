@@ -17,17 +17,7 @@ data "azurerm_image" "customimage" {
    resource_group_name = var.managed_image_resource_group_name
 }
 
-locals {
-    desc = substr(var.vm_hostname, 4, 5)
-    os = substr(var.vm_hostname, 1, 2)
-    env = substr(var.vm_hostname, 3, 1)
-  }
 
-resource "null_resource" "calc" {
-   os = local.os == "NT" ? "Windows" : "Linux"
-   env = local.env == "T" ? "Test" : local.env == "P" ? "Prod" : local.env == "R" ? "Pre-Prod" : local.env == "E" ? "Edu" : false
-   category = local.desc == "AP" ? "Generic Use" : local.desc == "BK" ? "Backup" : local.desc == "CA" ? "Certification Authority" : local.desc == "WS" ? "Web Server" : false
-}
 
 resource "random_id" "vm-sa" {
   keepers = {
