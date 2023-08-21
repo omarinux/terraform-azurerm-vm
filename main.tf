@@ -104,7 +104,7 @@ resource "azurerm_network_security_group" "nsg_windows" {
   resource_group_name = var.resource_group_name
 
   dynamic "security_rule" {
-  for_each = { for sg in var.security_rules : sg.name => sg } 
+  for_each = var.security_rules == [] ? [] : var.security_rules 
   content {
      name      = each.value.name
      priority  = each.value.priority
