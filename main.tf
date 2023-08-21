@@ -120,32 +120,24 @@ resource "azurerm_network_security_group" "nsg_windows" {
 }
 
 resource "azurerm_network_security_group" "nsg_linux" {
+  count               = "${var.vm_os_offer != "WindowsServer"}" ? var.nb_instances : 0
   location            = "${var.location}"
   name                = "nsglinux"
   resource_group_name = var.resource_group_name
 
-  security_rule {
-    name                       = "WEBLINUX"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "SSHLINUX"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+  dynamic "security_rule" {
+  for_each = var.nsg_list == [] ? [] : var.nsg_list
+      content {
+          name                        = security_rule.value[0]
+          priority                    = security_rule.value[1]
+          direction                   = security_rule.value[2]
+          access                      = security_rule.value[3]
+          protocol                    = security_rule.value[4]
+          source_port_range           = security_rule.value[5]
+          destination_port_range      = security_rule.value[6]
+          source_address_prefix       = security_rule.value[7]
+          destination_address_prefix  = security_rule.value[8]
+      }
   }
 }
 
