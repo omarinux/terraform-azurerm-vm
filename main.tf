@@ -145,7 +145,7 @@ resource "azurerm_network_interface_security_group_association" "test_linux" {
   count = "${var.vm_os_offer != "WindowsServer"}" ? var.nb_instances : 0
 
   network_interface_id      = azurerm_network_interface.vm_linux[count.index].id
-  network_security_group_id = azurerm_network_security_group.nsg_linux.id
+  network_security_group_id = azurerm_network_security_group.nsg_linux[count.index].id
 }
 
 resource "azurerm_network_interface_security_group_association" "test_windows" {
