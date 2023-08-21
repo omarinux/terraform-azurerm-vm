@@ -104,20 +104,19 @@ resource "azurerm_network_security_group" "nsg_windows" {
   resource_group_name = var.resource_group_name
 
   dynamic "security_rule" {
-  for_each = toset(var.security_rules)
-  content {
-     name      = each.value.name
-     priority  = each.value.priority
-     direction = each.value.direction 
-     access    = each.value.access
-     protocol  = each.value.protocol
-     source_port_range = each.value.source_port_range
-     destination_port_range = each.value.destination_port_range
-     source_address_prefix = each.value.source_address_prefix
-     destination_address_prefix = each.value.destination_address_prefix
-
+  for_each = var.nsg_list == [] ? [] : var.nsg_list
+      content {
+          name                        = security_rule.value[0]
+          priority                    = security_rule.value[1]
+          direction                   = security_rule.value[2]
+          access                      = security_rule.value[3]
+          protocol                    = security_rule.value[4]
+          source_port_range           = security_rule.value[5]
+          destination_port_range      = security_rule.value[6]
+          source_address_prefix       = security_rule.value[7]
+          destination_address_prefix  = security_rule.value[8]
+      }
   }
- }
 }
 
 resource "azurerm_network_security_group" "nsg_linux" {
